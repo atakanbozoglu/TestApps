@@ -17,7 +17,7 @@ namespace WFLoginApp
         {
             InitializeComponent();
         }
-
+        public string conString = "Data Source=ALGAPC012\\SQLEXPRESS;Initial Catalog=UserAppDB;Integrated Security=True";
         private void FForgotPassword_Load(object sender, EventArgs e)
         {
 
@@ -25,12 +25,9 @@ namespace WFLoginApp
 
         private void button1_Click(object sender, EventArgs e)
         {
-            #region Validation
 
-            //..
 
-            #endregion
-
+            
             userModel = new User 
             {
                 UserName = txtUsername.Text,

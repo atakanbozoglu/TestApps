@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace WFLoginApp
         {
             InitializeComponent();
         }
-
+        public string conString = "Data Source=ALGAPC012\\SQLEXPRESS;Initial Catalog=UserAppDB;Integrated Security=True";
         private void FRegister_Load(object sender, EventArgs e)
         {
 
@@ -28,8 +29,17 @@ namespace WFLoginApp
             if (IsValid())
             {
                 Register();
-            }
+                SqlConnection connection = new SqlConnection(conString);
+                connection.Open();
+                if (connection.State == System.Data.ConnectionState.Open)
+                {
+                    string query = "insert into Member values ('" + userModel.Name + "','" + userModel.Surname + "','" + userModel.Email + "','" + userModel.PhoneNumber + "','" + userModel.IdentityNumber + "','" + userModel.UserName + "','" + userModel.BirthDate + "','" + userModel.Password + "','" + userModel.Gender + "','" + userModel.Address + "','" + userModel.SecurityQuestion + "','" + userModel.SecurityAnswer + "')";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.ExecuteNonQuery();
 
+                }
+            }
+            
         }
         public bool IsValid()
         {
@@ -204,7 +214,7 @@ namespace WFLoginApp
             }
             else
             {
-                cinsiyet = 2;
+                cinsiyet = 0;
             }
 
             userModel = new User
@@ -224,9 +234,18 @@ namespace WFLoginApp
                 SecurityQuestion = txtSecurityQuestion.Text,
                 SecurityAnswer = txtSecurityAnswer.Text,
             };
-
+            //SqlConnection connection = new SqlConnection(conString);
+            //connection.Open();
+            //if (connection.State==System.Data.ConnectionState.Open)
+            //{
+            //    string query = "insert into Mem values ('"+txtName.Text+"','"+txtSurname.Text+"','"+txtEmail.Text+"')";
+            //    SqlCommand command = new SqlCommand(query, connection);
+            //    command.ExecuteNonQuery();
+                
+            //}
             MessageBox.Show("Kayıt Başarılı.");
-            this.Close();
+                this.Close();
+            
         }
     }
 }

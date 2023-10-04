@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -13,45 +14,61 @@ namespace WFLoginApp
     public partial class Form1 : Form
     {
         public List<User> userList = new List<User>();
+        FForgotPassword frm = new FForgotPassword();
         public Form1()
         {
             InitializeComponent();
         }
-
+        public string conString = "Data Source=ALGAPC012\\SQLEXPRESS;Initial Catalog=UserAppDB;Integrated Security=True";
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            FForgotPassword frm = new FForgotPassword();
+            
             frm.ShowDialog();
             if (frm.userModel != null)
             {
 
-                var user = userList.Where(w => w.UserName == frm.userModel.UserName
-                                            && w.PhoneNumber == frm.userModel.PhoneNumber
-                                            && w.IdentityNumber == frm.userModel.IdentityNumber
-                                            && w.SecurityQuestion == frm.userModel.SecurityQuestion
-                                            && w.SecurityAnswer == frm.userModel.SecurityAnswer).FirstOrDefault();
-
-                if (user != null)
-                {
-                    userList.Remove(user);
-                    userList.Add(new User
+                SqlConnection connection = new SqlConnection(conString);
+                    connection.Open();
+                    if (connection.State == System.Data.ConnectionState.Open)
                     {
-                        UserName = user.UserName,
-                        Address = user.Address,
-                        BirthDate = user.BirthDate,
-                        Email = user.Email,
-                        Gender = user.Gender,
-                        Id = user.Id,
-                        IdentityNumber = user.IdentityNumber,
-                        SecurityQuestion = user.SecurityQuestion,
-                        Name = user.Name,
-                        PhoneNumber = user.PhoneNumber,
-                        SecurityAnswer = user.SecurityAnswer,
-                        Surname = user.Surname,
-                        Password = frm.userModel.Password,
-                        PasswordConfirmed = frm.userModel.PasswordConfirmed
-                    });
-                }
+                        string query = "Update Member set MemberPassword='" + frm.userModel.Password + "'where (MemberUsername='"+frm.userModel.UserName+"'and MemberPhoneNumber='"+frm.userModel.PhoneNumber+ "'and MemberIdentıtyNumber='" + frm.userModel.IdentityNumber+"'and MemberSecurityQuestion='"+frm.userModel.SecurityQuestion+ "'and MemberSecurityAnswer='"+frm.userModel.SecurityAnswer+"')";
+                    SqlCommand command = new SqlCommand(query, connection);
+                        command.ExecuteNonQuery();
+
+                    }
+                    
+                    
+                
+
+
+
+                //var user = userList.Where(w => w.UserName == frm.userModel.UserName
+                //                            && w.PhoneNumber == frm.userModel.PhoneNumber
+                //                            && w.IdentityNumber == frm.userModel.IdentityNumber
+                //                            && w.SecurityQuestion == frm.userModel.SecurityQuestion
+                //                            && w.SecurityAnswer == frm.userModel.SecurityAnswer).FirstOrDefault();
+
+                //if (user != null)
+                //{
+                //    userList.Remove(user);
+                //    userList.Add(new User
+                //    {
+                //        UserName = user.UserName,
+                //        Address = user.Address,
+                //        BirthDate = user.BirthDate,
+                //        Email = user.Email,
+                //        Gender = user.Gender,
+                //        Id = user.Id,
+                //        IdentityNumber = user.IdentityNumber,
+                //        SecurityQuestion = user.SecurityQuestion,
+                //        Name = user.Name,
+                //        PhoneNumber = user.PhoneNumber,
+                //        SecurityAnswer = user.SecurityAnswer,
+                //        Surname = user.Surname,
+                //        Password = frm.userModel.Password,
+                //        PasswordConfirmed = frm.userModel.PasswordConfirmed
+                //    });
+                //}
                 //if (user!=null)
                 //{
 
@@ -72,6 +89,7 @@ namespace WFLoginApp
             frm.ShowDialog();
             if (frm.userModel != null)
             {
+                
                 userList.Add(frm.userModel);
             }
         }
@@ -136,6 +154,7 @@ namespace WFLoginApp
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
+            
             var user = userList.Where(w => w.UserName == txtUsername.Text && w.Password == txtPassword.Text).FirstOrDefault();
             if (user != null)
             {
